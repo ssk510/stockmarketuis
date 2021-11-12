@@ -1,0 +1,445 @@
+<div class="row-fluid mt-3">
+    <div class="col-md-12">
+        <div class="card">
+            <h3 class="card-header font-weight-bold py-2">Available companies</h3>
+            <div class="card-body" style="padding: 0.5rem;">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="md-form">
+                                <input type="text" [(ngModel)]="searchText" (ngModelChange)="searchItems()"
+                                    class="form-control" id="search" mdbInput />
+                                <label for="search">Search Company</label>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <button type="button" (click)="add()" mdbBtn color="primary" size="sm" class="my-0"
+                                style="float: right;margin-top: 1.5rem !important;">
+                                <mdb-icon fas icon="plus-circle"></mdb-icon> Add Company
+                            </button>
+                            <button *ngIf="companyList != null && companyList.length > 0" type="button"
+                                (click)="viewStockDetails()" mdbBtn color="primary" size="sm" class="my-0"
+                                style="float: right;margin-top: 1.5rem !important;">
+                                <mdb-icon fas icon="plus-circle"></mdb-icon> View Stock Details
+                            </button>
+                        </div>
+                    </div>
+                    <table id="listTable" mdbTable #tableEl="mdbTable" mdbTableScroll [scrollY]="scrollY"
+                        maxHeight="300" class="z-depth-1">
+                        <thead>
+                            <tr>
+                                <th class="font-weight-bold stylish-color" aria-controls="listTable"
+                                    [mdbTableSort]="companyList" [sortBy]="'code'" scope="col" style="color: #ffffff;">
+                                    Code <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <th class="font-weight-bold stylish-color" aria-controls="listTable"
+                                    [mdbTableSort]="companyList" [sortBy]="'name'" scope="col" style="color: #ffffff;">
+                                    Name <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <th class="font-weight-bold stylish-color" aria-controls="listTable"
+                                    [mdbTableSort]="companyList" [sortBy]="'ceo'" scope="col" style="color: #ffffff;">
+                                    CEO <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <th class="font-weight-bold stylish-color" aria-controls="listTable"
+                                    [mdbTableSort]="companyList" [sortBy]="'turnover'" scope="col"
+                                    style="color: #ffffff;">Turnover <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <th class="font-weight-bold stylish-color" aria-controls="listTable"
+                                    [mdbTableSort]="companyList" [sortBy]="'website'" scope="col"
+                                    style="color: #ffffff;">Website <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <th class="font-weight-bold stylish-color" aria-controls="listTable"
+                                    [mdbTableSort]="companyList" [sortBy]="'stockExchange'" scope="col"
+                                    style="color: #ffffff;">Stock Exchange <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <!-- <th class="font-weight-bold stylish-color" aria-controls="listTable" scope="col"
+                                    style="color: #ffffff;">Current Stock Price
+                                </th> -->
+                                <th class="font-weight-bold stylish-color" style="color: #ffffff;">View</th>
+                                <th class="font-weight-bold stylish-color" style="color: #ffffff;">Add</th>
+                                <!-- <th class="font-weight-bold stylish-color" style="color: #ffffff;">View</th> -->
+                                <th class="font-weight-bold stylish-color" style="color: #ffffff;">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let el of companyList; let i = index">
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    {{el.code}}</td>
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    {{el.name}}</td>
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    {{el.ceo}}</td>
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    $ {{el.turnover}}</td>
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    <a href="javascript:void(0)">{{el.website}}</a>
+                                </td>
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    {{el.stockExchange}}</td>
+                                <!-- <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    $ {{(getLatestStockPriceOfCompany(el))}}</td> -->
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    <button type="button" (click)="viewCompanyStockDetails(el)" mdbBtn color="primary"
+                                        size="sm" class="my-0">
+                                        <mdb-icon fas icon="eye"></mdb-icon> View Stock Details
+                                    </button>
+                                </td>
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    <button type="button" mdbBtn color="primary" size="sm" class="my-0"
+                                        (click)="addStockDetail(el)">
+                                        <mdb-icon fas icon="plus-circle"></mdb-icon> Add Stock Detail
+                                    </button>
+                                </td>
+                                <td
+                                    *ngIf="i+1 >= mdbTablePagination.firstItemIndex && i < mdbTablePagination.lastItemIndex">
+                                    <button type="button" mdbBtn color="danger" size="sm" class="my-0"
+                                        (click)="remove(el)">
+                                        <mdb-icon fas icon="trash"></mdb-icon> Delete Company
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="grey lighten-5 w-100">
+                            <tr>
+                                <td colspan="9">
+                                    <mdb-table-pagination #companyPagination [tableEl]="tableEl"
+                                        [searchDataSource]="companyList">
+                                    </mdb-table-pagination>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div mdbModal #stockDetails="mdbModal" class="modal fade left" id="stockDetails" tabindex="-1" role="dialog"
+    aria-labelledby="stockDetailsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">{{selectedCompany != null ? 'Stock Details of
+                    '+selectedCompany?.name : 'Stock Details'}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"
+                    (click)="stockDetails.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mx-3">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <div class="d-flex justify-content-start">
+                                <p *ngIf="selectedCompany == null" class="mr-2">
+                                    <strong style="font-weight: bold;color: #00695c;">Company: </strong>
+                                    <select class="form-control" style="display: inline;height: 30px;" id="company"
+                                        [formControl]="stockCmpSelect">
+                                        <option [value]="null" disabled>--Select--</option>
+                                        <option *ngFor="let company of companyList" [value]="company.code">
+                                            {{company.name}}</option>
+                                    </select>
+                                </p>
+                                <p><strong style="font-weight: bold;color: #00695c;">From: </strong><input
+                                        [formControl]="fromDate" type="date"></p>
+                                <p><strong style="font-weight: bold;color: #00695c;">To: </strong><input
+                                        [formControl]="toDate" type="date"></p>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <button *ngIf="selectedCompany == null" style="float: right;" type="button" mdbBtn
+                                color="primary" size="sm" class="my-4" (click)="showAll()">
+                                <mdb-icon fas icon="undo"></mdb-icon> Reset
+                            </button>
+                            <button *ngIf="selectedCompany != null" style="float: right;" type="button" mdbBtn
+                                color="primary" size="sm" (click)="showCompanyAll()">
+                                <mdb-icon fas icon="undo"></mdb-icon> Reset
+                            </button>
+                        </div>
+                    </div>
+                    <table id="listStockTable" *ngIf="selectedCmpStkList" mdbTable #stockTableEl="mdbTable"
+                        mdbTableScroll [scrollY]="scrollY" maxHeight="250" class="z-depth-1">
+                        <thead>
+                            <tr>
+                                <th class="font-weight-bold stylish-color" aria-controls="listStockTable"
+                                    [mdbTableSort]="selectedCmpStkList" [sortBy]="'companyName'" scope="col"
+                                    style="color: #ffffff;">
+                                    Company <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <th class="font-weight-bold stylish-color" aria-controls="listStockTable"
+                                    [mdbTableSort]="selectedCmpStkList" [sortBy]="'price'" scope="col"
+                                    style="color: #ffffff;">
+                                    Price <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <th class="font-weight-bold stylish-color" aria-controls="listStockTable"
+                                    [mdbTableSort]="selectedCmpStkList" [sortBy]="'date'" scope="col"
+                                    style="color: #ffffff;">
+                                    Date <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                                <th class="font-weight-bold stylish-color" aria-controls="listStockTable"
+                                    [mdbTableSort]="selectedCmpStkList" [sortBy]="'time'" scope="col"
+                                    style="color: #ffffff;">
+                                    Time <mdb-icon fas icon="sort"></mdb-icon>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let el of selectedCmpStkList; let i = index">
+                                <td *ngIf="i+1 >= stockTablePgn.firstItemIndex && i < stockTablePgn.lastItemIndex">
+                                    {{getcompanyName(el.companyCode)}}</td>
+                                <td *ngIf="i+1 >= stockTablePgn.firstItemIndex && i < stockTablePgn.lastItemIndex">
+                                    $ {{el.price}}</td>
+                                <td *ngIf="i+1 >= stockTablePgn.firstItemIndex && i < stockTablePgn.lastItemIndex">
+                                    {{getFormattedDate(el.date)}}</td>
+                                <td *ngIf="i+1 >= stockTablePgn.firstItemIndex && i < stockTablePgn.lastItemIndex">
+                                    {{getFormattedTime(el.time)}}</td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="grey lighten-5 w-100">
+                            <tr>
+                                <td colspan="4">
+                                    <mdb-table-pagination #stockTablePgn [tableEl]="stockTableEl"
+                                        [searchDataSource]="selectedCmpStkList">
+                                    </mdb-table-pagination>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer" *ngIf="showAdditionalDetails">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p><strong style="font-weight: bold;color: #00695c;">Latest Price:</strong> $
+                                {{getFormattedNaN(latestStockPrice?.price)}}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><strong style="font-weight: bold;color: #00695c;">Min:</strong> $
+                                {{getFormattedNaN(stockMin?.price)}}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p><strong style="font-weight: bold;color: #00695c;">Max:</strong> $
+                                {{getFormattedNaN(stockMax?.price)}}</p>
+                        </div>
+                        <div class="col-sm-3">
+                            <p class="text-right"><strong style="font-weight: bold;color: #00695c;">Avg:</strong>
+                                $ {{getFormattedNaN(stockAvg)}}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div mdbModal #addCompany="mdbModal" class="modal fade left" id="addCompany" tabindex="-1" role="dialog"
+    aria-labelledby="addCompanyLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Add Company</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="addCompany.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mx-3">
+                <form [formGroup]="addCompanyForm" novalidate autocomplete="off" class="well form-horizontal"
+                    (ngSubmit)="onSubmit()">
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="companyCode"><small class="requiredField">*</small>Code</label>
+                                    <div class="inputcontainer">
+                                        <input type="text" formControlName="companyCode" class="form-control"
+                                            id="companyCode" placeholder="Company Code">
+                                        <div *ngIf="addCompanyFormControl.companyCode.pending" class="icon-container">
+                                            <i class="loader"></i>
+                                        </div>
+                                    </div>
+                                    <span class="text-danger"
+                                        *ngIf="(addCompanyFormControl.companyCode.touched || submitted) && addCompanyFormControl.companyCode.errors?.required">
+                                        Company code is required
+                                    </span>
+                                    <span class="text-danger"
+                                        *ngIf="(addCompanyFormControl.companyCode.touched || submitted) && !addCompanyFormControl.companyCode.pending && addCompanyFormControl.companyCode.errors?.companyNotAvailable">
+                                        Company code is already exists
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="companyName"><small class="requiredField">*</small>Company Name</label>
+                                    <input type="text" formControlName="companyName" class="form-control"
+                                        id="companyName" placeholder="Company Name">
+                                    <span class="text-danger"
+                                        *ngIf="(addCompanyFormControl.companyName.touched || submitted) && addCompanyFormControl.companyName.errors?.required">
+                                        Company name is required
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="companyCEO"><small class="requiredField">*</small>Company CEO</label>
+                                    <input type="text" formControlName="companyCEO" class="form-control" id="companyCEO"
+                                        placeholder="Company CEO">
+                                    <span class="text-danger"
+                                        *ngIf="(addCompanyFormControl.companyCEO.touched || submitted) && addCompanyFormControl.companyCEO.errors?.required">
+                                        Company CEO is required
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="companyTurnover"><small class="requiredField">*</small>Company
+                                        Turnover </label>
+                                    <input type="text" maxlength="19" formControlName="companyTurnover"
+                                        class="form-control" id="companyTurnover" placeholder="Company Turnover">
+                                    <div class="text-danger"
+                                        *ngIf="(addCompanyFormControl.companyTurnover.touched || submitted) && addCompanyFormControl.companyTurnover.errors?.required">
+                                        Company turnover is required
+                                    </div>
+                                    <div class="text-danger"
+                                        *ngIf="(addCompanyFormControl.companyTurnover.dirty || submitted) && addCompanyFormControl.companyTurnover.errors?.gte">
+                                        Company turnover should be greater than
+                                        {{addCompanyFormControl.companyTurnover.errors.requiredValue}} crore
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="companyWebsite"><small class="requiredField">*</small>Company
+                                        Website</label>
+                                    <input type="text" formControlName="companyWebsite" class="form-control"
+                                        id="companyWebsite" placeholder="Company Website">
+                                    <span class="text-danger"
+                                        *ngIf="(addCompanyFormControl.companyWebsite.touched || submitted) && addCompanyFormControl.companyWebsite.errors?.required">
+                                        Company website is required
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="companyStockExchange"><small class="requiredField">*</small>Company
+                                        Stock
+                                        Exchange</label>
+                                    <select class="form-control" formControlName="companyStockExchange"
+                                        id="companyStockExchange">
+                                        <option [value]="null" disabled>--Select--</option>
+                                        <option *ngFor="let exchange of stockExchangeList" [value]="exchange">
+                                            {{exchange}}</option>
+                                    </select>
+                                    <span class="text-danger"
+                                        *ngIf="(addCompanyFormControl.companyStockExchange.touched || addCompanyFormControl.companyStockExchange.dirty || submitted) && addCompanyFormControl.companyStockExchange.errors?.required">
+                                        Company stock exchange is required
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="requiredField">* <span>indicated fields are mandatory</span></small>
+                            </div>
+                            <div class="col-md-6">
+                                <div>
+                                    <button (click)="addCompanyForm.reset()" type="reset" mdbBtn type="button"
+                                        color="secondary" style="float:right;" class="waves-light"
+                                        mdbWavesEffect>Reset</button>
+                                    <button mdbBtn [disabled]="!addCompanyForm.valid" type="button" type="submit"
+                                        color="primary" style="float:right;" class="waves-light"
+                                        mdbWavesEffect>Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <!-- <div class="modal-footer d-flex justify-content-center">
+                <button mdbBtn color="default" data-dismiss="modal" aria-label="Close" (click)="addCompany.hide()"
+                    class="waves-light" mdbWavesEffect>Close</button>
+            </div> -->
+        </div>
+    </div>
+</div>
+
+<div mdbModal #addStock="mdbModal" class="modal fade left" id="addStock" tabindex="-1" role="dialog"
+    aria-labelledby="addStockLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header text-center">
+                <h4 class="modal-title w-100 font-weight-bold">Add Stock
+                    {{addStockFormControl.company != null ? 'to '+ addStockFormControl?.company?.value?.name : ''}}</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="addStock.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body mx-3">
+                <form [formGroup]="addStockForm" novalidate autocomplete="off" class="well form-horizontal"
+                    (ngSubmit)="onStockSubmit()">
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stockPrice"><small class="requiredField">*</small>Price</label>
+                                    <input type="text" formControlName="price" class="form-control" id="stockPrice"
+                                        placeholder="Stock Price">
+                                    <div class="text-danger"
+                                        *ngIf="(addStockFormControl.price.touched || stockSubmitted) && addStockFormControl.price.errors?.required">
+                                        Stock price is required
+                                    </div>
+                                    <div class="text-danger"
+                                        *ngIf="(addStockFormControl.price.dirty || stockSubmitted) && addStockFormControl.price.errors?.notvalid">
+                                        Stock price should be fractional value
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="stockDate">Date: {{addStockFormControl?.date?.value}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="stockTime">Time: {{addStockFormControl?.time?.value}}</label>
+                                </div>
+                            </div> -->
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <small class="requiredField">* <span>indicated fields are mandatory</span></small>
+                            </div>
+                            <div class="col-md-6">
+                                <div>
+                                    <button (click)="stockReset()" type="reset" mdbBtn type="button" color="secondary"
+                                        style="float:right;" class="waves-light" mdbWavesEffect>Reset</button>
+                                    <button mdbBtn [disabled]="!addStockForm.valid" type="button" type="submit"
+                                        color="primary" style="float:right;" class="waves-light"
+                                        mdbWavesEffect>Add</button>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+            </div>
+            <!-- <div class="modal-footer d-flex justify-content-center">
+                <button mdbBtn color="default" data-dismiss="modal" aria-label="Close" (click)="addCompany.hide()"
+                    class="waves-light" mdbWavesEffect>Close</button>
+            </div> -->
+        </div>
+    </div>
+</div>

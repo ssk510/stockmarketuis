@@ -1,0 +1,15 @@
+<form class="signin text-center border border-light p-5" novalidate autocomplete="off" [formGroup]="signinForm" (ngSubmit)="onSubmit()">
+
+    <p class="h4 mb-4">Sign In</p>
+
+    <input type="email" formControlName="UserName" id="UserName" mdbInput class="form-control mb-4"
+        placeholder="E-Mail">
+
+    <input type="text" formControlName="UserPassword" id="UserPassword" mdbInput class="form-control mb-4"
+        placeholder="Password">
+
+
+    <button mdbBtn color="info" class="z-depth-0 my-4 waves-effect" mdbWavesEffect
+        type="submit" [disabled]="!signinForm.valid">Sign In</button>
+
+</form>

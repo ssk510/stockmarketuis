@@ -1,0 +1,255 @@
+<div class="main">
+  <h4 class="heading">Search Company</h4>
+  <div class="input-group">
+    <input style="height: 46px;" [formControl]="searchText" type="text" class="form-control" placeholder="Company code">
+    <div class="input-group-append">
+      <button [disabled]="searchText.invalid" (click)="searchCompany()" style="margin: 0;" class="btn btn-primary"
+        type="button">
+        <i class="fa fa-search"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div [class.hideEl]="selectedCompany == null || selectedCompany.length <= 0" class="row-fluid mt-3">
+  <div class="col-md-12">
+    <div class="card">
+      <h3 class="card-header font-weight-bold py-2">Available companies</h3>
+      <div class="card-body" style="padding: 0.5rem;">
+        <div class="container-fluid">
+          <table id="listTable" mdbTable #tableEl="mdbTable" mdbTableScroll [scrollY]="scrollY" maxHeight="300"
+            class="z-depth-1">
+            <thead>
+              <tr>
+                <th class="font-weight-bold stylish-color" aria-controls="listTable" scope="col"
+                  style="color: #ffffff;">
+                  Code
+                </th>
+                <th class="font-weight-bold stylish-color" aria-controls="listTable" scope="col"
+                  style="color: #ffffff;">
+                  Name
+                </th>
+                <th class="font-weight-bold stylish-color" aria-controls="listTable" scope="col"
+                  style="color: #ffffff;">
+                  CEO
+                </th>
+                <th class="font-weight-bold stylish-color" aria-controls="listTable" scope="col"
+                  style="color: #ffffff;">Turnover
+                </th>
+                <th class="font-weight-bold stylish-color" aria-controls="listTable" scope="col"
+                  style="color: #ffffff;">Website
+                </th>
+                <th class="font-weight-bold stylish-color" aria-controls="listTable" scope="col"
+                  style="color: #ffffff;">Stock Exchange
+                </th>
+                <!-- <th class="font-weight-bold stylish-color" aria-controls="listTable" scope="col"
+                  style="color: #ffffff;">Current Stock Price
+                </th> -->
+                <th class="font-weight-bold stylish-color" style="color: #ffffff;">View</th>
+                <th class="font-weight-bold stylish-color" style="color: #ffffff;">Add</th>
+                <!-- <th class="font-weight-bold stylish-color" style="color: #ffffff;">View</th> -->
+                <th class="font-weight-bold stylish-color" style="color: #ffffff;">Delete</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let el of selectedCompany; let i = index">
+                <td>
+                  {{el.code}}</td>
+                <td>
+                  {{el.name}}</td>
+                <td>
+                  {{el.ceo}}</td>
+                <td>
+                  $ {{el.turnover}}</td>
+                <td>
+                  <a href="{{el.website}}" target="_blank">{{el.website}}</a>
+                </td>
+                <td>
+                  {{el.stockExchange}}</td>
+                <!-- <td>
+                  $ {{(getLatestStockPriceOfCompany(el))}}</td> -->
+                <td>
+                  <button type="button" (click)="viewCompanyStockDetails(el)"
+                    mdbBtn color="primary" size="sm" class="my-0">
+                    <mdb-icon fas icon="eye"></mdb-icon> View Stock Details
+                  </button>
+                </td>
+                <td>
+                  <button type="button" mdbBtn color="primary" size="sm" class="my-0" (click)="addStockDetail(el)">
+                    <mdb-icon fas icon="plus-circle"></mdb-icon> Add Stock Detail
+                  </button>
+                </td>
+                <td>
+                  <button type="button" mdbBtn color="danger" size="sm" class="my-0" (click)="remove(el)">
+                    <mdb-icon fas icon="trash"></mdb-icon> Delete Company
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mdbModal #stockDetails="mdbModal" class="modal fade left" id="stockDetails" tabindex="-1" role="dialog"
+  aria-labelledby="stockDetailsLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">{{selectedCompany != null ? 'Stock Details of
+          '+selectedCompany[0]?.name : 'Stock Details'}}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="stockDetails.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-9">
+              <div class="d-flex justify-content-start">
+                <p><strong style="font-weight: bold;color: #00695c;">From: </strong><input [formControl]="fromDate"
+                    type="date"></p>
+                <p><strong style="font-weight: bold;color: #00695c;">To: </strong><input [formControl]="toDate"
+                    type="date"></p>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <button style="float: right;" type="button" mdbBtn color="primary" size="sm" (click)="showCompanyAll()">
+                <mdb-icon fas icon="undo"></mdb-icon> Reset
+              </button>
+            </div>
+          </div>
+          <table id="listStockTable" mdbTable #stockTableEl="mdbTable" mdbTableScroll [scrollY]="scrollY"
+            maxHeight="250" class="z-depth-1">
+            <thead>
+              <tr>
+                <th class="font-weight-bold stylish-color" aria-controls="listStockTable"
+                  [mdbTableSort]="selectedCmpStkList" [sortBy]="'price'" scope="col" style="color: #ffffff;">
+                  Price <mdb-icon fas icon="sort"></mdb-icon>
+                </th>
+                <th class="font-weight-bold stylish-color" aria-controls="listStockTable"
+                  [mdbTableSort]="selectedCmpStkList" [sortBy]="'date'" scope="col" style="color: #ffffff;">
+                  Date <mdb-icon fas icon="sort"></mdb-icon>
+                </th>
+                <th class="font-weight-bold stylish-color" aria-controls="listStockTable"
+                  [mdbTableSort]="selectedCmpStkList" [sortBy]="'time'" scope="col" style="color: #ffffff;">
+                  Time <mdb-icon fas icon="sort"></mdb-icon>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let el of selectedCmpStkList; let i = index">
+                <td *ngIf="i+1 >= stockTablePgn.firstItemIndex && i < stockTablePgn.lastItemIndex">
+                  $ {{el.price}}</td>
+                <td *ngIf="i+1 >= stockTablePgn.firstItemIndex && i < stockTablePgn.lastItemIndex">
+                  {{getFormattedDate(el.date)}}</td>
+                <td *ngIf="i+1 >= stockTablePgn.firstItemIndex && i < stockTablePgn.lastItemIndex">
+                  {{getFormattedTime(el.time)}}</td>
+              </tr>
+            </tbody>
+            <tfoot class="grey lighten-5 w-100">
+              <tr>
+                <td colspan="4">
+                  <mdb-table-pagination #stockTablePgn [tableEl]="stockTableEl" [searchDataSource]="selectedCmpStkList">
+                  </mdb-table-pagination>
+                </td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <div class="container-fluid">
+          <div class="row">
+            <div class="col-sm-3">
+              <p><strong style="font-weight: bold;color: #00695c;">Latest Price:</strong> $
+                {{getFormattedNaN(latestStockPrice?.price)}}</p>
+            </div>
+            <div class="col-sm-3">
+              <p><strong style="font-weight: bold;color: #00695c;">Min:</strong> $
+                {{getFormattedNaN(stockMin?.price)}}</p>
+            </div>
+            <div class="col-sm-3">
+              <p><strong style="font-weight: bold;color: #00695c;">Max:</strong> $
+                {{getFormattedNaN(stockMax?.price)}}</p>
+            </div>
+            <div class="col-sm-3">
+              <p class="text-right"><strong style="font-weight: bold;color: #00695c;">Avg:</strong>
+                $ {{getFormattedNaN(stockAvg)}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div mdbModal #addStock="mdbModal" class="modal fade left" id="addStock" tabindex="-1" role="dialog"
+  aria-labelledby="addStockLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">Add Stock
+          {{addStockFormControl.company != null ? 'to '+ addStockFormControl?.company?.value?.name : ''}}</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="addStock.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <form [formGroup]="addStockForm" novalidate autocomplete="off" class="well form-horizontal"
+          (ngSubmit)="onStockSubmit()">
+          <fieldset>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group">
+                  <label for="stockPrice"><small class="requiredField">*</small>Price</label>
+                  <input type="text" formControlName="price" class="form-control" id="stockPrice"
+                    placeholder="Stock Price">
+                  <div class="text-danger"
+                    *ngIf="(addStockFormControl.price.touched || stockSubmitted) && addStockFormControl.price.errors?.required">
+                    Stock price is required
+                  </div>
+                  <div class="text-danger"
+                    *ngIf="(addStockFormControl.price.dirty || stockSubmitted) && addStockFormControl.price.errors?.notvalid">
+                    Stock price should be fractional value
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="stockDate">Date: {{addStockFormControl?.date?.value}}</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="stockTime">Time: {{addStockFormControl?.time?.value}}</label>
+                                </div>
+                            </div> -->
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <small class="requiredField">* <span>indicated fields are mandatory</span></small>
+              </div>
+              <div class="col-md-6">
+                <div>
+                  <button (click)="stockReset()" type="reset" mdbBtn type="button" color="secondary"
+                    style="float:right;" class="waves-light" mdbWavesEffect>Reset</button>
+                  <button mdbBtn [disabled]="!addStockForm.valid" type="button" type="submit" color="primary"
+                    style="float:right;" class="waves-light" mdbWavesEffect>Add</button>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+      <!-- <div class="modal-footer d-flex justify-content-center">
+                <button mdbBtn color="default" data-dismiss="modal" aria-label="Close" (click)="addCompany.hide()"
+                    class="waves-light" mdbWavesEffect>Close</button>
+            </div> -->
+    </div>
+  </div>
+</div>
+
+<p [class.hideEl]="selectedCompany == null || selectedCompany.length > 0" class="text-center">No Data Found!.</p>

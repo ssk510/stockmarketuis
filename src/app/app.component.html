@@ -1,0 +1,83 @@
+<mdb-navbar SideClass="navbar navbar-expand-lg navbar-dark indigo" [containerInside]="false">
+
+  <mdb-navbar-brand>
+    <a class="navbar-brand" routerLink="home" href="javascript:void(0)">
+      <img src="../assets/e-rlogo.png" height="30" class="d-inline-block align-top" alt="">
+      E-Stock Market
+    </a>
+  </mdb-navbar-brand>
+
+  <links>
+    <ul class="navbar-nav mr-auto" *ngIf="isUserLoggedIn">
+      <li class="nav-item">
+        <a class="nav-link waves-light" routerLink="home" mdbWavesEffect>
+          <mdb-icon fas icon="home"></mdb-icon> Home<span class="sr-only">(current)</span>
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link waves-light" routerLink="list-companies" mdbWavesEffect>
+          <mdb-icon fas icon="clipboard-list"></mdb-icon> List All Companies
+        </a>
+      </li>
+    </ul>
+
+    <ul class="navbar-nav ml-auto">
+      <ng-container *ngIf="!isUserLoggedIn">
+        <li class="nav-item">
+          <a class="nav-link waves-light" routerLink="signin" mdbWavesEffect>
+            <mdb-icon fas icon="sign-in-alt"></mdb-icon> Sign In<span class="sr-only">(current)</span>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link waves-light" routerLink="signup" mdbWavesEffect>
+            <mdb-icon fas icon="user-plus"></mdb-icon> Sign Up
+          </a>
+        </li>
+      </ng-container>
+      <ng-container *ngIf="isUserLoggedIn">
+        <li class="nav-item" *ngIf="loggerUser != null">
+          <a class="nav-link waves-light" style="font-weight: bold;">
+            Welcome, {{loggerUser.attributes.given_name}} {{loggerUser.attributes.family_name}}
+          </a>
+        </li>
+        <li class="nav-item dropdown" dropdown>
+          <a dropdownToggle mdbWavesEffect type="button" class="nav-link dropdown-toggle waves-light" mdbWavesEffect>
+            <mdb-icon fas icon="user-circle"></mdb-icon> Profile<span class="caret"></span>
+          </a>
+          <div *dropdownMenu class="dropdown-menu dropdown-menu-right dropdown dropdown-primary" role="menu">
+            <a class="dropdown-item waves-light" (click)="signout($event)" mdbWavesEffect href="javascript:void(0)">Log
+              out</a>
+          </div>
+        </li>
+      </ng-container>
+
+    </ul>
+
+  </links>
+
+</mdb-navbar>
+<div style="overflow: auto;height: 98vh;">
+  <router-outlet></router-outlet>
+</div>
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="#fff" type="line-scale-pulse-out-rapid"
+  [fullScreen]="true">
+  <p style="color: white"> Loading... </p>
+</ngx-spinner>
+
+<div mdbModal #sessionExpiryModal="mdbModal" [config]="{backdrop: 'static', keyboard: false}" class="modal fade right" tabindex="-1" role="dialog" aria-labelledby="myBasicModalLabel"
+   aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title w-100" id="myModalLabel">Session Expiry</h4>
+            </div>
+            <div class="modal-body">
+              Your session is about to expire in {{expireSeconds}} seconds, do you want to continue or sign out?
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" mdbBtn color="secondary" class="waves-light" aria-label="Close" (click)="signout($event)" mdbWavesEffect>Sign out</button>
+                <button type="button" mdbBtn color="primary" class="relative waves-light" (click)="continue($event)" mdbWavesEffect>Continue</button>
+            </div>
+        </div>
+    </div>
+</div>

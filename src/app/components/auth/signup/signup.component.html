@@ -1,0 +1,21 @@
+<form class="signup text-center border border-light p-5" novalidate autocomplete="off" [formGroup]="signUpForm" (ngSubmit)="onSubmit()">
+
+    <p class="h4 mb-4">Sign Up</p>
+
+    <input type="text" formControlName="UserFName" id="UserFName" mdbInput class="form-control mb-4"
+        placeholder="First Name">
+
+    <input type="text" formControlName="UserLName" id="UserLName" mdbInput class="form-control mb-4"
+        placeholder="Last Name">
+
+    <input type="email" formControlName="UserName" id="UserName" mdbInput class="form-control mb-4"
+        placeholder="E-Mail">
+
+    <input type="text" formControlName="UserPassword" id="UserPassword" mdbInput class="form-control mb-4"
+        placeholder="Password">
+
+
+    <button mdbBtn color="info" class="z-depth-0 my-4 waves-effect" mdbWavesEffect
+        type="submit" [disabled]="!signUpForm.valid">Sign Up</button>
+
+</form>
